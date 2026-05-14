@@ -1,0 +1,62 @@
+{
+  "story": {
+    "liked": false,
+    "followed": false,
+    "rating": 5,
+    "likeLabel": "9.4K"
+  },
+  "comments": [
+    {
+      "id": 1,
+      "user": "ShadowReader",
+      "badge": "Top Fan",
+      "avatar": "assets/avatar-shadow.png",
+      "text": "This chapter was amazing! The art, the story, everything is peak!",
+      "createdAt": 1778694493414,
+      "likes": 45
+    },
+    {
+      "id": 2,
+      "user": "StarLight",
+      "badge": "Supporter",
+      "avatar": "assets/supporter-starlight.png",
+      "text": "The eclipse panel gave me chills. I need chapter 13 immediately.",
+      "createdAt": 1778683693414,
+      "likes": 72
+    }
+  ],
+  "supporters": [
+    {
+      "name": "StarLight",
+      "amount": 200,
+      "avatar": "assets/supporter-starlight.png"
+    },
+    {
+      "name": "MangaLover",
+      "amount": 150,
+      "avatar": "assets/supporter-manga.png"
+    },
+    {
+      "name": "DreamWalker",
+      "amount": 100,
+      "avatar": "assets/supporter-dream.png"
+    },
+    {
+      "name": "Astra",
+      "amount": 80,
+      "avatar": "assets/avatar-comment.png"
+    },
+    {
+      "name": "Nocturne",
+      "amount": 55,
+      "avatar": "assets/avatar-shadow.png"
+    }
+  ],
+  "uploads": [],
+  "creator": {
+    "name": "Lunaria",
+    "primaryGenre": "Fantasy",
+    "supportEnabled": true
+  },
+  "donations": []
+}

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PuffKiss - Re: Eclipse</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" data-route="home" aria-label="PuffKiss home">
+      <img src="assets/logo-lips.png" alt="" class="brand-mark">
+      <span>Puff<span>Kiss</span></span>
+    </a>
+
+    <form class="search" id="searchForm" role="search">
+      <input id="searchInput" type="search" autocomplete="off" placeholder="Search webtoons, manga, creators...">
+      <button type="submit" class="icon-button" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.8 4a6.8 6.8 0 1 0 0 13.6 6.8 6.8 0 0 0 0-13.6Zm0 1.8a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/><path d="m16 16 4 4"/></svg>
+      </button>
+      <div class="search-results" id="searchResults" aria-live="polite"></div>
+    </form>
+
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <button data-route="browse">Browse</button>
+      <button data-route="genres">Genres</button>
+      <button data-route="popular">Popular</button>
+      <button data-route="creators">Creators</button>
+      <button data-route="community">Community</button>
+    </nav>
+
+    <div class="top-actions">
+      <button class="primary-button" data-open-upload>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v10"/><path d="M7 10l5-5 5 5"/><path d="M6 19h12a3 3 0 0 0 0-6h-1.2A5 5 0 0 0 7 12.2H6a3.4 3.4 0 0 0 0 6.8Z"/></svg>
+        Upload
+      </button>
+      <button class="icon-button bell" data-menu="notifications" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M9.5 21a3 3 0 0 0 5 0"/></svg>
+        <span></span>
+      </button>
+      <div class="profile-wrap">
+        <button class="profile-button" data-menu="profile" aria-label="Open profile menu">
+          <img src="assets/avatar-lunaria.png" alt="Lunaria avatar">
+          <span>Lunaria</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="popover" id="profileMenu">
+          <button data-route="profile">Profile</button>
+          <button data-route="wallet">Creator Wallet</button>
+          <button data-route="settings">Settings</button>
+          <button data-action="signout">Sign out</button>
+        </div>
+      </div>
+      <div class="popover notifications-popover" id="notificationsMenu">
+        <strong>Notifications</strong>
+        <p>StarLight donated $200 to Re: Eclipse.</p>
+        <p>Your chapter draft autosaved.</p>
+        <p>MangaLover replied to your comment.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Sidebar">
+      <button class="wide-upload" data-open-upload>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        Upload Work
+      </button>
+
+      <section>
+        <h2>Menu</h2>
+        <button class="side-link active" data-route="home" data-label="Home">
+          <span class="side-icon">H</span>
+          Home
+        </button>
+        <button class="side-link" data-route="library" data-label="My Library">
+          <span class="side-icon">L</span>
+          My Library
+        </button>
+        <button class="side-link" data-route="following" data-label="Following">
+          <span class="side-icon">F</span>
+          Following
+        </button>
+        <button class="side-link" data-route="history" data-label="History">
+          <span class="side-icon">R</span>
+          History
+        </button>
+        <button class="side-link" data-route="uploads" data-label="My Uploads">
+          <span class="side-icon">U</span>
+          My Uploads
+        </button>
+        <button class="side-link" data-route="bookmarks" data-label="Bookmarks">
+          <span class="side-icon">B</span>
+          Bookmarks
+        </button>
+      </section>
+
+      <section class="genres-block">
+        <h2>Genres</h2>
+        <button data-genre="Action">Action</button>
+        <button data-genre="Romance">Romance</button>
+        <button data-genre="Fantasy">Fantasy</button>
+        <button data-genre="Comedy">Comedy</button>
+        <button data-genre="Drama">Drama</button>
+        <button data-genre="Slice of Life">Slice of Life</button>
+        <button data-genre="Horror">Horror</button>
+        <button class="more-toggle" id="moreGenres" aria-expanded="false">
+          More
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+        <div class="extra-genres" id="extraGenres">
+          <button data-genre="Supernatural">Supernatural</button>
+          <button data-genre="Sci-Fi">Sci-Fi</button>
+          <button data-genre="Mystery">Mystery</button>
+        </div>
+      </section>
+
+      <section class="creator-card">
+        <h2>Become a Creator</h2>
+        <p>Upload your story, grow your audience, and receive support from fans.</p>
+        <button class="primary-button full" data-open-creator>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h18"/><path d="m5 17 2-9 5 5 5-5 2 9"/></svg>
+          Get Started
+        </button>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="story-card">
+        <nav class="crumbs" aria-label="Breadcrumbs">
+          <button data-route="home">Home</button>
+          <span>/</span>
+          <button data-genre="Fantasy">Fantasy</button>
+          <span>/</span>
+          <span>Re: Eclipse</span>
+        </nav>
+
+        <div class="story-hero">
+          <img src="assets/cover-re-eclipse.png" alt="Re: Eclipse cover art" class="cover-art">
+          <div class="story-copy">
+            <div class="title-row">
+              <h1>Re: Eclipse</h1>
+              <span class="status-pill">Ongoing</span>
+            </div>
+            <p class="creator-line">By Lunaria <span class="verified" aria-label="verified creator">check</span></p>
+            <div class="tags" id="tagList">
+              <button data-genre="Fantasy">Fantasy</button>
+              <button data-genre="Action">Action</button>
+              <button data-genre="Supernatural">Supernatural</button>
+            </div>
+            <p class="description">In a world torn apart by an eternal eclipse, a young warrior awakens a forbidden power that could either save humanity or destroy it forever.</p>
+            <div class="metrics">
+              <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12s3.8-7 10.5-7 10.5 7 10.5 7-3.8 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg><span id="viewCount">125.6K</span></span>
+              <button class="metric-button" id="likeButton" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg><span id="likeCount">9.4K</span></button>
+              <button class="metric-button" id="ratingButton" aria-label="Rate Re: Eclipse"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3 6.2 6.8 1-4.9 4.8 1.2 6.8-6.1-3.2-6.1 3.2 1.2-6.8-4.9-4.8 6.8-1L12 2Z"/></svg><span id="ratingValue">4.9</span></button>
+              <button class="primary-button follow-button" id="followButton">Follow</button>
+              <button class="icon-button share-button" id="shareButton" aria-label="Share this comic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6h14v-6"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="reader-card" aria-label="Comic reader">
+        <div class="reader-toolbar">
+          <div class="chapter-left">
+            <label for="chapterSelect">Chapter</label>
+            <select id="chapterSelect">
+              <option value="10">Chapter 10</option>
+              <option value="11">Chapter 11</option>
+              <option value="12" selected>Chapter 12</option>
+              <option value="13">Chapter 13</option>
+              <option value="14">Chapter 14</option>
+            </select>
+            <span id="chapterTitle">The Eclipse Reawakens</span>
+          </div>
+          <button class="primary-button next-chapter" id="nextChapterTop">Next Chapter <span aria-hidden="true">&gt;</span></button>
+        </div>
+
+        <div class="reader-controls">
+          <select id="fitMode" aria-label="Reader fit mode">
+            <option value="fit" selected>Fit width</option>
+            <option value="original">Original</option>
+            <option value="compact">Compact</option>
+          </select>
+          <button class="small-control" id="zoomOut" aria-label="Zoom out">-</button>
+          <button class="small-control" id="zoomIn" aria-label="Zoom in">+</button>
+          <button class="small-control" id="resetReader" aria-label="Reset reader">R</button>
+        </div>
+
+        <div class="reader-stage" id="readerStage">
+          <img id="readerImage" src="assets/reader-eclipse.png" alt="Eclipse city comic panel">
+        </div>
+
+        <div class="reader-footer">
+          <button id="prevChapter"><span aria-hidden="true">&lt;</span> Prev</button>
+          <span><strong id="currentPage">12</strong> / <span id="totalPages">32</span></span>
+          <button id="nextChapter">Next <span aria-hidden="true">&gt;</span></button>
+        </div>
+      </section>
+
+      <section class="comments-card">
+        <div class="comments-head">
+          <h2>Comments (<span id="commentCount">128</span>)</h2>
+          <label>Sort by:
+            <select id="sortComments">
+              <option value="newest" selected>Newest</option>
+              <option value="top">Top</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </label>
+        </div>
+        <form class="comment-form" id="commentForm">
+          <img src="assets/avatar-comment.png" alt="Your avatar">
+          <input id="commentInput" type="text" maxlength="160" placeholder="Write a comment...">
+          <button class="primary-button" type="submit">Post</button>
+        </form>
+        <div id="commentsList" class="comments-list"></div>
+      </section>
+    </main>
+
+    <aside class="right-rail">
+      <section class="support-card">
+        <h2>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+          Support the Creator
+        </h2>
+        <p>Your support helps creators continue making amazing stories.</p>
+        <h3>Select Donation Amount (USD)</h3>
+        <div class="donation-grid" id="donationGrid">
+          <button data-amount="1">$1</button>
+          <button data-amount="5">$5</button>
+          <button class="selected" data-amount="10">$10</button>
+          <button data-amount="20">$20</button>
+          <button data-amount="50">$50</button>
+          <button data-amount="100">$100</button>
+          <button data-amount="150">$150</button>
+          <button data-amount="200">$200</button>
+          <button data-custom>Custom <span aria-hidden="true">edit</span></button>
+        </div>
+        <button class="primary-button donate-button" id="donateButton">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+          Donate $10
+        </button>
+        <p class="secure-line">Secure payments via Stripe</p>
+      </section>
+
+      <section class="supporters-card">
+        <h2>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M5 6H3a4 4 0 0 0 4 4"/><path d="M19 6h2a4 4 0 0 1-4 4"/></svg>
+          Top Supporters
+        </h2>
+        <div class="supporters-list" id="supportersList"></div>
+        <button class="outline-button full" id="viewSupporters">View All Supporters</button>
+      </section>
+    </aside>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden></div>
+
+  <dialog class="modal" id="uploadModal" aria-labelledby="uploadTitle">
+    <button class="close-modal" data-close-modal aria-label="Close upload dialog">&times;</button>
+    <h2 id="uploadTitle">Upload Work</h2>
+    <form id="uploadForm" class="modal-form">
+      <label>Story title <input required name="title" placeholder="Moonlit Valkyrie"></label>
+      <label>Genre
+        <select name="genre">
+          <option>Fantasy</option>
+          <option>Action</option>
+          <option>Romance</option>
+          <option>Supernatural</option>
+        </select>
+      </label>
+      <label>Chapter name <input required name="chapter" placeholder="Chapter 1 - First Spark"></label>
+      <label class="file-drop">Cover image <input type="file" accept="image/*"></label>
+      <button class="primary-button full" type="submit">Publish Draft</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="creatorModal" aria-labelledby="creatorTitle">
+    <button class="close-modal" data-close-modal aria-label="Close creator dialog">&times;</button>
+    <h2 id="creatorTitle">Creator Setup</h2>
+    <form id="creatorForm" class="modal-form">
+      <label>Creator name <input required name="creator" value="Lunaria"></label>
+      <label>Primary genre <input required name="primaryGenre" value="Fantasy"></label>
+      <label class="checkbox-label"><input type="checkbox" name="supportEnabled" checked> Enable fan support on new uploads</label>
+      <button class="primary-button full" type="submit">Start Creator Profile</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="customDonationModal" aria-labelledby="customDonationTitle">
+    <button class="close-modal" data-close-modal aria-label="Close custom donation dialog">&times;</button>
+    <h2 id="customDonationTitle">Custom Donation</h2>
+    <form id="customDonationForm" class="modal-form">
+      <label>Amount in USD <input id="customAmountInput" required type="text" inputmode="numeric" pattern="[0-9]+" value="25"></label>
+      <button class="primary-button full" type="submit">Use Custom Amount</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="supportersModal" aria-labelledby="supportersTitle">
+    <button class="close-modal" data-close-modal aria-label="Close supporters dialog">&times;</button>
+    <h2 id="supportersTitle">All Supporters</h2>
+    <div id="allSupporters" class="modal-list"></div>
+  </dialog>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
