@@ -7,6 +7,23 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <section class="landing-view" id="landingView" aria-label="PuffKiss homepage">
+    <div class="homepage-frame">
+      <img src="assets/puffkiss-homepage.png" alt="PuffKiss homepage: Read, obsess, fall hard." class="homepage-art">
+      <button class="hotspot nav-home active" data-landing-nav="home" aria-label="Home"></button>
+      <button class="hotspot nav-discover" data-landing-nav="discover" aria-label="Discover"></button>
+      <button class="hotspot nav-categories" data-landing-nav="categories" aria-label="Categories"></button>
+      <button class="hotspot nav-popular" data-landing-nav="popular" aria-label="Popular"></button>
+      <button class="hotspot nav-new" data-landing-nav="new releases" aria-label="New Releases"></button>
+      <button class="hotspot nav-creators" data-landing-nav="creators" aria-label="Creators"></button>
+      <button class="hotspot login-hotspot" data-open-login aria-label="Login"></button>
+      <button class="hotspot signup-hotspot" data-open-signup aria-label="Sign Up"></button>
+      <button class="hotspot start-reading-hotspot" data-open-login aria-label="Start Reading"></button>
+      <button class="hotspot upload-story-hotspot" data-open-signup aria-label="Upload Your Story"></button>
+    </div>
+  </section>
+
+  <div class="app-view" id="appView" hidden>
   <header class="topbar">
     <a class="brand" href="#" data-route="home" aria-label="PuffKiss home">
       <img src="assets/logo-lips.png" alt="" class="brand-mark">
@@ -254,8 +271,31 @@
       </section>
     </aside>
   </div>
+  </div>
 
   <div class="modal-backdrop" id="modalBackdrop" hidden></div>
+
+  <dialog class="modal" id="loginModal" aria-labelledby="loginTitle">
+    <button class="close-modal" data-close-modal aria-label="Close login dialog">&times;</button>
+    <h2 id="loginTitle">Login</h2>
+    <form id="loginForm" class="modal-form">
+      <label>Email <input required type="text" inputmode="email" name="email" placeholder="lunaria@puffkiss.test"></label>
+      <label>Password <input required type="password" name="password" placeholder="Password"></label>
+      <button class="primary-button full" type="submit">Login</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="signupModal" aria-labelledby="signupTitle">
+    <button class="close-modal" data-close-modal aria-label="Close sign up dialog">&times;</button>
+    <h2 id="signupTitle">Sign Up</h2>
+    <form id="signupForm" class="modal-form">
+      <label>Display name <input required name="displayName" value="Lunaria"></label>
+      <label>Email <input required type="text" inputmode="email" name="email" placeholder="creator@puffkiss.test"></label>
+      <label>Password <input required type="password" name="password" placeholder="Create a password"></label>
+      <label class="checkbox-label"><input type="checkbox" name="creatorAccount" checked> Sign up as a creator</label>
+      <button class="primary-button full" type="submit">Create Account</button>
+    </form>
+  </dialog>
 
   <dialog class="modal" id="uploadModal" aria-labelledby="uploadTitle">
     <button class="close-modal" data-close-modal aria-label="Close upload dialog">&times;</button>

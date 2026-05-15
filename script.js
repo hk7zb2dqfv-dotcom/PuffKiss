@@ -138,6 +138,35 @@ async function loadServerState() {
   }
 }
 
+function hasSession() {
+  return Boolean(localStorage.getItem("puffkissSession"));
+}
+
+function showLanding() {
+  $("#landingView").hidden = false;
+  $("#appView").hidden = true;
+  $$("[data-landing-nav]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.landingNav === "home");
+  });
+}
+
+async function showApp(message) {
+  $("#landingView").hidden = true;
+  $("#appView").hidden = false;
+  await loadServerState();
+  if (message) toast(message);
+}
+
+async function completeAuth(mode, profile = {}) {
+  localStorage.setItem("puffkissSession", JSON.stringify({
+    mode,
+    name: profile.name || "Lunaria",
+    createdAt: Date.now()
+  }));
+  closeAllModals();
+  await showApp(mode === "signup" ? "Creator account created. Welcome to PuffKiss." : "Logged in. Welcome back.");
+}
+
 function toast(message) {
   const region = $("#toastRegion");
   const note = document.createElement("div");
@@ -363,6 +392,26 @@ async function saveUpload(formData) {
 }
 
 function setupEvents() {
+  $$("[data-landing-nav]").forEach((button) => {
+    button.addEventListener("click", () => {
+      $$("[data-landing-nav]").forEach((item) => item.classList.toggle("active", item === button));
+      const section = button.dataset.landingNav;
+      if (section === "creators") {
+        openModal($("#signupModal"));
+      } else {
+        toast(`${readable(section)} selected. Login or sign up to enter PuffKiss.`);
+      }
+    });
+  });
+
+  $$("[data-open-login]").forEach((button) => {
+    button.addEventListener("click", () => openModal($("#loginModal")));
+  });
+
+  $$("[data-open-signup]").forEach((button) => {
+    button.addEventListener("click", () => openModal($("#signupModal")));
+  });
+
   $$("[data-route]").forEach((button) => {
     button.addEventListener("click", (event) => {
       event.preventDefault();
@@ -582,6 +631,30 @@ function setupEvents() {
     }
   });
 
+  $("#loginForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await completeAuth("login", { name: "Lunaria" });
+  });
+
+  $("#signupForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const displayName = formData.get("displayName") || "Lunaria";
+    try {
+      await apiRequest("/api/creator", {
+        method: "POST",
+        body: JSON.stringify({
+          creator: displayName,
+          primaryGenre: "Fantasy",
+          supportEnabled: Boolean(formData.get("creatorAccount"))
+        })
+      });
+    } catch (error) {
+      toast(`Creator profile will sync later: ${error.message}`);
+    }
+    await completeAuth("signup", { name: displayName });
+  });
+
   $("#customDonationForm").addEventListener("submit", (event) => {
     event.preventDefault();
     setDonationAmount($("#customAmountInput").value);
@@ -609,7 +682,9 @@ function setupEvents() {
 
   $("[data-action='signout']").addEventListener("click", () => {
     closePopovers();
-    toast("Signed out of this demo session.");
+    localStorage.removeItem("puffkissSession");
+    showLanding();
+    toast("Signed out. Back on the PuffKiss homepage.");
   });
 }
 
@@ -619,7 +694,11 @@ async function init() {
   renderStoryState();
   setupEvents();
   updateReaderFit();
-  await loadServerState();
+  if (hasSession()) {
+    await showApp();
+  } else {
+    showLanding();
+  }
 }
 
 init();
