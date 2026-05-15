@@ -56,11 +56,190 @@ const searchItems = [
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
+const isLocalHost = ["localhost", "127.0.0.1"].includes(location.hostname);
 const fallbackApiOrigin = `${location.protocol}//${location.hostname}:4174`;
+const clientDatabaseKey = "puffkissDatabase";
+let usingStaticStorage = false;
+
+function defaultClientDatabase() {
+  const now = Date.now();
+
+  return {
+    story: {
+      liked: false,
+      followed: false,
+      rating: 4.9,
+      likeLabel: "9.4K"
+    },
+    comments: [
+      {
+        id: 1,
+        user: "ShadowReader",
+        badge: "Top Fan",
+        avatar: "assets/avatar-shadow.png",
+        text: "This chapter was amazing! The art, the story, everything is peak!",
+        createdAt: now - 2 * 60 * 60 * 1000,
+        likes: 45
+      },
+      {
+        id: 2,
+        user: "StarLight",
+        badge: "Supporter",
+        avatar: "assets/supporter-starlight.png",
+        text: "The eclipse panel gave me chills. I need chapter 13 immediately.",
+        createdAt: now - 5 * 60 * 60 * 1000,
+        likes: 72
+      }
+    ],
+    supporters: [
+      { name: "StarLight", amount: 200, avatar: "assets/supporter-starlight.png" },
+      { name: "MangaLover", amount: 150, avatar: "assets/supporter-manga.png" },
+      { name: "DreamWalker", amount: 100, avatar: "assets/supporter-dream.png" },
+      { name: "Astra", amount: 80, avatar: "assets/avatar-comment.png" },
+      { name: "Nocturne", amount: 55, avatar: "assets/avatar-shadow.png" }
+    ],
+    uploads: [],
+    creator: {
+      name: "Lunaria",
+      primaryGenre: "Fantasy",
+      supportEnabled: true
+    },
+    donations: []
+  };
+}
+
+function readClientDatabase() {
+  const saved = localStorage.getItem(clientDatabaseKey);
+  if (!saved) {
+    const database = defaultClientDatabase();
+    writeClientDatabase(database);
+    return database;
+  }
+
+  try {
+    return JSON.parse(saved);
+  } catch {
+    const database = defaultClientDatabase();
+    writeClientDatabase(database);
+    return database;
+  }
+}
+
+function writeClientDatabase(database) {
+  localStorage.setItem(clientDatabaseKey, JSON.stringify(database));
+}
+
+function parseRequestBody(options) {
+  return options.body ? JSON.parse(options.body) : {};
+}
+
+function cleanText(value, maxLength = 160) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, maxLength);
+}
+
+async function localApiRequest(path, options = {}) {
+  usingStaticStorage = true;
+  const database = readClientDatabase();
+  const method = (options.method || "GET").toUpperCase();
+
+  if (method === "GET" && path === "/api/state") {
+    return database;
+  }
+
+  if (method === "POST" && path === "/api/comments") {
+    const body = parseRequestBody(options);
+    const text = cleanText(body.text);
+    if (!text) throw new Error("Comment text is required.");
+    const comment = {
+      id: Date.now(),
+      user: "Lunaria",
+      badge: "Creator",
+      avatar: "assets/avatar-comment.png",
+      text,
+      createdAt: Date.now(),
+      likes: 0
+    };
+    database.comments.push(comment);
+    writeClientDatabase(database);
+    return { comment, comments: database.comments };
+  }
+
+  if (method === "POST" && path === "/api/comment-like") {
+    const body = parseRequestBody(options);
+    const comment = database.comments.find((item) => item.id === Number(body.id));
+    if (!comment) throw new Error("Comment not found.");
+    comment.likes += 1;
+    writeClientDatabase(database);
+    return { comment, comments: database.comments };
+  }
+
+  if (method === "POST" && path === "/api/donations") {
+    const body = parseRequestBody(options);
+    const amount = Math.max(1, Math.min(5000, Math.round(Number(body.amount) || 0)));
+    if (!amount) throw new Error("Donation amount is required.");
+    const existing = database.supporters.find((supporter) => supporter.name === "Lunaria");
+    if (existing) existing.amount += amount;
+    else database.supporters.push({ name: "Lunaria", amount, avatar: "assets/avatar-lunaria.png" });
+    const donation = { id: Date.now(), name: "Lunaria", amount, createdAt: Date.now() };
+    database.donations.push(donation);
+    writeClientDatabase(database);
+    return { donation, supporters: database.supporters };
+  }
+
+  if (method === "POST" && path === "/api/uploads") {
+    const body = parseRequestBody(options);
+    const title = cleanText(body.title, 80);
+    const genre = cleanText(body.genre, 30) || "Fantasy";
+    const chapter = cleanText(body.chapter, 80);
+    if (!title || !chapter) throw new Error("Title and chapter are required.");
+    const upload = { id: Date.now(), title, genre, chapter, createdAt: Date.now() };
+    database.uploads.push(upload);
+    writeClientDatabase(database);
+    return { upload, uploads: database.uploads };
+  }
+
+  if (method === "POST" && path === "/api/creator") {
+    const body = parseRequestBody(options);
+    database.creator = {
+      name: cleanText(body.creator, 50) || "Lunaria",
+      primaryGenre: cleanText(body.primaryGenre, 30) || "Fantasy",
+      supportEnabled: Boolean(body.supportEnabled)
+    };
+    writeClientDatabase(database);
+    return { creator: database.creator };
+  }
+
+  if (method === "POST" && path === "/api/follow") {
+    const body = parseRequestBody(options);
+    database.story.followed = Boolean(body.followed);
+    writeClientDatabase(database);
+    return { followed: database.story.followed };
+  }
+
+  if (method === "POST" && path === "/api/like") {
+    const body = parseRequestBody(options);
+    database.story.liked = Boolean(body.liked);
+    database.story.likeLabel = database.story.liked ? "9.5K" : "9.4K";
+    writeClientDatabase(database);
+    return { liked: database.story.liked, likeLabel: database.story.likeLabel };
+  }
+
+  if (method === "POST" && path === "/api/rating") {
+    const body = parseRequestBody(options);
+    database.story.rating = Math.max(1, Math.min(5, Number(body.rating) || 5));
+    writeClientDatabase(database);
+    return { rating: database.story.rating };
+  }
+
+  throw new Error("Static API route not found.");
+}
 
 async function apiRequest(path, options = {}) {
   const origins = [""];
-  if (location.origin !== fallbackApiOrigin) origins.push(fallbackApiOrigin);
+  if (isLocalHost && location.origin !== fallbackApiOrigin) origins.push(fallbackApiOrigin);
   let latestError = new Error("Server request failed.");
 
   for (const origin of origins) {
@@ -84,7 +263,11 @@ async function apiRequest(path, options = {}) {
     }
   }
 
-  throw latestError;
+  try {
+    return await localApiRequest(path, options);
+  } catch {
+    throw latestError;
+  }
 }
 
 function escapeHtml(value) {
@@ -105,7 +288,7 @@ function syncSearchUploads() {
     searchItems.push({
       title: upload.title,
       type: "Draft",
-      action: () => toast(`${upload.title} draft opened from the server.`)
+      action: () => toast(`${upload.title} draft opened.`)
     });
   });
 }
@@ -121,6 +304,7 @@ function renderStoryState() {
 
 async function loadServerState() {
   try {
+    usingStaticStorage = false;
     const data = await apiRequest("/api/state");
     state.comments = data.comments || state.comments;
     state.supporters = data.supporters || state.supporters;
@@ -132,7 +316,7 @@ async function loadServerState() {
     renderStoryState();
     renderComments();
     renderSupporters();
-    toast("Connected to PuffKiss server.");
+    toast(usingStaticStorage ? "Running in GitHub Pages mode." : "Connected to PuffKiss server.");
   } catch (error) {
     toast(`Server unavailable: ${error.message}`);
   }
@@ -542,7 +726,7 @@ function setupEvents() {
       });
       state.supporters = data.supporters;
       renderSupporters();
-      toast(`Donation saved on the server: $${state.selectedAmount} sent to Lunaria.`);
+      toast(`Donation saved: $${state.selectedAmount} sent to Lunaria.`);
     } catch (error) {
       toast(`Could not save donation: ${error.message}`);
     }
@@ -569,7 +753,7 @@ function setupEvents() {
       state.comments = data.comments;
       input.value = "";
       renderComments();
-      toast("Comment posted to the server.");
+      toast("Comment posted.");
     } catch (error) {
       toast(`Could not post comment: ${error.message}`);
     }
@@ -625,7 +809,7 @@ function setupEvents() {
         })
       });
       closeAllModals();
-      toast("Creator profile settings saved on the server.");
+      toast("Creator profile settings saved.");
     } catch (error) {
       toast(`Could not save creator profile: ${error.message}`);
     }
